@@ -233,7 +233,7 @@ const Game: React.FC = () => {
       <div className={styles.page}>
         <div className={styles.continueOverlay}>
           <div className={styles.continueCard}>
-            <img src="/owl.svg" alt="猫头鹰" className={styles.continueOwl} />
+            <img src={`${import.meta.env.BASE_URL}owl.svg`} alt="猫头鹰" className={styles.continueOwl} />
             <h2 className={styles.continueTitle}>检测到未完成的游戏</h2>
             <p className={styles.continueDesc}>是否继续上次的对局？</p>
             <div className={styles.continueActions}>

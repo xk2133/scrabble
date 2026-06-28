@@ -169,7 +169,7 @@ const WordBook: React.FC = () => {
     return (
       <div className={styles.page}>
         <main className={styles.emptyState}>
-          <img src="/owl.svg" alt="猫头鹰" className={styles.owlImg} />
+          <img src={`${import.meta.env.BASE_URL}owl.svg`} alt="猫头鹰" className={styles.owlImg} />
           <p className={styles.emptyText}>还没有收藏单词，去对战吧！</p>
           <Button
             variant="primary"

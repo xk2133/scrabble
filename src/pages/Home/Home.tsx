@@ -81,7 +81,7 @@ const Home: React.FC = () => {
         {/* Hero Title */}
         <div className={styles.hero}>
           <div className={styles.titleRow}>
-            <img src="/owl.svg" alt="猫头鹰" className={styles.owlImg} />
+            <img src={`${import.meta.env.BASE_URL}owl.svg`} alt="猫头鹰" className={styles.owlImg} />
             <h1 className={styles.title}>Scrabble</h1>
           </div>
         </div>
