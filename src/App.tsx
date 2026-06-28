@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { AppProvider, useAppContext } from './context/AppContext';
 import { GameProvider } from './context/GameContext';
 import Home from './pages/Home/Home';
@@ -54,14 +54,14 @@ function AppInner() {
   const { toasts, removeToast } = useAppContext();
   return (
     <>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
           <Route path="/wordbook" element={<WordBook />} />
           <Route path="/help" element={<Help />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
     </>
   );
