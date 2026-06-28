@@ -1,0 +1,301 @@
+/* ===== OllieMascot CSS Module ===== */
+
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ===== Speech Bubble ===== */
+
+.bubble {
+  position: relative;
+  background: var(--color-cream-white);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1) var(--space-2);
+  box-shadow:
+    4px 4px 8px rgba(0, 0, 0, 0.06),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.6);
+  max-width: 200px;
+  margin-bottom: 4px;
+  animation: bubbleFloat 3s ease-in-out infinite;
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 6px;
+  background: var(--color-cream-white);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.bubbleText {
+  font-size: var(--fs-xs);
+  font-family: var(--font-sans);
+  color: var(--color-deep-blue-gray);
+  line-height: var(--lh-tight);
+  white-space: nowrap;
+}
+
+/* ===== Ollie Body ===== */
+
+.ollie {
+  position: relative;
+  width: var(--ollie-size);
+  height: var(--ollie-size);
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Round body */
+.ollie::before {
+  content: '';
+  position: absolute;
+  inset: 15% 5% 5% 5%;
+  background: var(--color-apricot);
+  border-radius: 45% 45% 48% 48% / 42% 42% 52% 52%;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    inset 0 -4px 6px rgba(0, 0, 0, 0.08),
+    inset 0 4px 6px rgba(255, 255, 255, 0.3);
+}
+
+/* Belly patch */
+.ollie::after {
+  content: '';
+  position: absolute;
+  inset: 40% 20% 15% 20%;
+  background: var(--color-cream-white);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+/* Head-only: hide body, belly, emoji */
+.headOnly::before,
+.headOnly::after {
+  display: none;
+}
+
+.headOnly {
+  height: calc(var(--ollie-size) * 0.55);
+  overflow: hidden;
+}
+
+/* ===== Ears ===== */
+
+.ear {
+  position: absolute;
+  top: 2%;
+  width: 22%;
+  height: 18%;
+  background: var(--color-apricot);
+  clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  z-index: 0;
+}
+
+.earLeft  { left: 20%;  transform: rotate(-8deg); }
+.earRight { right: 20%; transform: rotate(8deg); }
+
+/* ===== Eyes ===== */
+
+.eye {
+  position: absolute;
+  top: 28%;
+  width: 28%;
+  height: 30%;
+  background: #fff;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.eyeLeft  { left: 16%; }
+.eyeRight { right: 16%; }
+
+.pupil {
+  width: 45%;
+  height: 45%;
+  background: var(--color-deep-blue-gray);
+  border-radius: 50%;
+  position: relative;
+}
+
+.pupil::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  width: 25%;
+  height: 25%;
+  background: #fff;
+  border-radius: 50%;
+}
+
+/* ===== Beak ===== */
+
+.beak {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid var(--color-apricot);
+  filter: brightness(0.7);
+  z-index: 1;
+}
+
+/* ===== Eyebrows (expression modifiers) ===== */
+
+.brow {
+  position: absolute;
+  top: 22%;
+  width: 20%;
+  height: 4px;
+  background: var(--color-warm-brown);
+  border-radius: 2px;
+  z-index: 2;
+  transition: all var(--duration-fast) var(--ease-bounce);
+}
+
+.browLeft  { left: 15%; }
+.browRight { right: 15%; }
+
+/* default / smile: normal flat */
+.ollie.smile .brow,
+.ollie.encourage .brow {
+  top: 22%;
+}
+
+/* happy: raised (arch up) */
+.happy .brow {
+  top: 18%;
+  transform: rotate(-5deg);
+}
+.happy .browRight {
+  transform: rotate(5deg);
+}
+
+/* thinking: one raised */
+.thinking .browLeft {
+  top: 18%;
+  transform: rotate(-8deg);
+}
+.thinking .browRight {
+  top: 22%;
+}
+
+/* confused: furrowed */
+.confused .browLeft {
+  top: 24%;
+  transform: rotate(8deg);
+}
+.confused .browRight {
+  top: 24%;
+  transform: rotate(-8deg);
+}
+
+/* surprised: raised high */
+.surprised .brow {
+  top: 14%;
+  height: 5px;
+}
+.surprised .eye {
+  height: 35%;
+}
+
+/* ===== Wings ===== */
+
+.wing {
+  position: absolute;
+  top: 35%;
+  width: 18%;
+  height: 30%;
+  background: var(--color-apricot);
+  border-radius: 40% 60% 60% 40%;
+  filter: brightness(0.9);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-bounce);
+}
+
+.wingLeft  { left: -12%; }
+.wingRight { right: -12%; }
+
+.happy .wing,
+.encourage .wing {
+  opacity: 1;
+  animation: wingFlap 0.3s var(--ease-bounce) infinite alternate;
+}
+
+/* ===== Emoji overlay ===== */
+
+.emoji {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: calc(var(--ollie-size) * 0.7);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ===== Animations ===== */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+.happy {
+  animation: bounce var(--duration-slow) var(--ease-bounce) infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  30%      { transform: translateY(-10px); }
+  50%      { transform: translateY(0); }
+  70%      { transform: translateY(-5px); }
+}
+
+.encourage {
+  animation: sway 1.2s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(5deg); }
+  75%      { transform: rotate(-5deg); }
+}
+
+.thinking {
+  animation: tiltThink 2s ease-in-out infinite;
+}
+
+@keyframes tiltThink {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(-3deg); }
+}
+
+@keyframes bubbleFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+
+@keyframes wingFlap {
+  from { transform: rotate(-20deg); }
+  to   { transform: rotate(20deg); }
+}

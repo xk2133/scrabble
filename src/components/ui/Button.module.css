@@ -1,0 +1,209 @@
+/* ===== Button CSS Module ===== */
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-bounce),
+    box-shadow var(--duration-fast) var(--ease-bounce),
+    filter var(--duration-fast) var(--ease-smooth);
+  border: none;
+  white-space: nowrap;
+  user-select: none;
+  line-height: var(--lh-tight);
+  outline: none;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ===== Sizes ===== */
+
+.lg {
+  height: 52px;
+  padding: 0 var(--space-4);
+  font-size: var(--fs-base);
+  border-radius: var(--radius-md);
+}
+
+.md {
+  height: 40px;
+  padding: 0 var(--space-3);
+  font-size: var(--fs-sm);
+}
+
+.sm {
+  height: 28px;
+  padding: 0 var(--space-2);
+  font-size: var(--fs-xs);
+  border-radius: var(--radius-sm);
+}
+
+.mini {
+  height: 32px;
+  padding: 0 10px;
+  font-size: var(--fs-xs);
+  border-radius: var(--radius-sm);
+}
+
+/* Mobile: minimum 48px touch target */
+@media (pointer: coarse) {
+  .sm {
+    min-height: 48px;
+    padding: 0 var(--space-3);
+  }
+  .mini {
+    min-height: 48px;
+    padding: 0 var(--space-3);
+  }
+}
+
+/* ===== Variants ===== */
+
+.primary {
+  background-color: var(--color-sunny-yellow);
+  color: var(--color-deep-blue-gray);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 4px 16px rgba(107, 78, 61, 0.16),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.primary:active:not(:disabled) {
+  transform: scale(0.97) translateY(0);
+}
+
+.secondary {
+  background-color: var(--color-coral-orange);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 4px 16px rgba(107, 78, 61, 0.16),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.secondary:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.secondary:active:not(:disabled) {
+  transform: scale(0.97) translateY(0);
+}
+
+.outline {
+  background-color: transparent;
+  border: 2px solid var(--color-deep-blue-gray);
+  color: var(--color-deep-blue-gray);
+  box-shadow: none;
+}
+
+.outline:hover:not(:disabled) {
+  background-color: var(--color-deep-blue-gray);
+  color: #fff;
+}
+
+.outline:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.ghost {
+  background-color: transparent;
+  border: 2px solid transparent;
+  box-shadow: none;
+  color: var(--color-deep-blue-gray);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: rgba(27, 73, 101, 0.06);
+}
+
+.ghost:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.danger {
+  background-color: var(--color-coral-orange);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 4px 16px rgba(255, 110, 97, 0.25),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.4),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.danger:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.danger:active:not(:disabled) {
+  transform: scale(0.97) translateY(0);
+}
+
+/* ===== Modifiers ===== */
+
+.fullWidth {
+  width: 100%;
+}
+
+.disabledState {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Loading ===== */
+
+.loadingState {
+  cursor: wait;
+}
+
+.spinner {
+  position: absolute;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.contentHidden {
+  visibility: hidden;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  animation: dotPulse 1.4s ease-in-out infinite both;
+}
+
+.dot:nth-child(1) { animation-delay: 0s; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,105 @@
+/* ===== PageLayout - 页面布局容器 ===== */
+
+.layout {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--color-cream-white);
+}
+
+/* Max-width 480px centered on desktop */
+.container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--color-cream-white);
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    4px 0 24px rgba(27, 73, 101, 0.06),
+    -4px 0 24px rgba(27, 73, 101, 0.06);
+}
+
+/* ===== Header ===== */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 var(--space-3);
+  background: var(--color-cream-white);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.headerLeft,
+.headerRight {
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.title {
+  flex: 1;
+  text-align: center;
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  font-family: var(--font-sans);
+  color: var(--color-deep-blue-gray);
+  margin: 0;
+  line-height: var(--lh-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  font-size: var(--fs-xl);
+  color: var(--color-deep-blue-gray);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition:
+    background var(--duration-fast),
+    transform var(--duration-fast) var(--ease-bounce);
+  padding: 0;
+}
+
+.backBtn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.backBtn:active {
+  transform: scale(0.92);
+}
+
+/* ===== Main Content ===== */
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3);
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Desktop: no extra gutters needed */
+@media (min-width: 481px) {
+  .layout {
+    padding: 0;
+  }
+}

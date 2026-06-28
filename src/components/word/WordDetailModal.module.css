@@ -1,0 +1,171 @@
+/* ===== WordDetailModal - 单词详情 ===== */
+
+.content {
+  min-height: 180px;
+}
+
+/* ===== Loading ===== */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-4) 0;
+}
+
+.loadingGap {
+  height: var(--space-2);
+}
+
+/* ===== Empty ===== */
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-6) 0;
+  gap: var(--space-2);
+}
+
+.emptyIcon {
+  font-size: 2.5rem;
+  opacity: 0.5;
+}
+
+.emptyText {
+  color: var(--color-warm-brown);
+  font-size: var(--fs-base);
+  margin: 0;
+}
+
+/* ===== Success ===== */
+
+.success {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.wordTitle {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-deep-blue-gray);
+  line-height: var(--lh-tight);
+}
+
+.phonetic {
+  font-size: var(--fs-lg);
+  color: var(--color-warm-brown);
+  font-family: Georgia, "Times New Roman", serif;
+  margin-left: 2px;
+}
+
+/* ===== Meanings ===== */
+
+.meanings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.meaningBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.posBadge {
+  display: inline-block;
+  padding: 2px 12px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--color-deep-blue-gray);
+  background: var(--color-apricot);
+  border-radius: var(--radius-full);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.06),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  align-self: flex-start;
+  font-family: var(--font-sans);
+}
+
+.defList {
+  margin: 0;
+  padding-left: var(--space-3);
+  list-style: decimal;
+}
+
+.defItem {
+  margin-bottom: var(--space-1);
+  line-height: var(--lh-normal);
+  color: var(--color-deep-blue-gray);
+}
+
+.defText {
+  font-size: var(--fs-sm);
+}
+
+.defExample {
+  display: block;
+  font-size: var(--fs-xs);
+  font-style: italic;
+  color: var(--color-warm-brown);
+  margin-top: 2px;
+}
+
+/* ===== Favorite button (in modal header) ===== */
+
+.favBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-bounce),
+    background var(--duration-fast) var(--ease-smooth);
+  font-family: var(--font-sans);
+  background: var(--color-khaki);
+  color: var(--color-deep-blue-gray);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.06),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.favBtn:hover {
+  transform: scale(1.05);
+}
+
+.heartIcon {
+  font-size: var(--fs-lg);
+  line-height: 1;
+  transition: color var(--duration-fast);
+}
+
+.faved {
+  background: var(--color-mint-green);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.faved .heartIcon {
+  color: #fff;
+}

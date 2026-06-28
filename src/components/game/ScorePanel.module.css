@@ -1,0 +1,150 @@
+/* ===== ScorePanel - 分数板 ===== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  animation: fadeIn var(--duration-normal) var(--ease-smooth);
+}
+
+.panel {
+  position: relative;
+  background: var(--color-cream-white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  width: 90vw;
+  max-width: 360px;
+  box-shadow: var(--shadow-clay-xl);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  text-align: center;
+  animation: panelUp var(--duration-normal) var(--ease-bounce);
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  font-size: var(--fs-xl);
+  color: var(--color-warm-brown);
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.scoreSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.scoreLabel {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--color-warm-brown);
+}
+
+.scoreValue {
+  font-family: var(--font-sans);
+  font-size: var(--fs-4xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-deep-blue-gray);
+}
+
+.bingoBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  margin-bottom: var(--space-3);
+  background: linear-gradient(135deg, rgba(255, 210, 63, 0.3), rgba(244, 162, 97, 0.3));
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-sm);
+  color: var(--color-deep-blue-gray);
+}
+
+.bingoSparkle {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-sunny-yellow);
+  animation: sparkle 1s ease-in-out infinite alternate;
+}
+
+.wordList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.wordItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--color-khaki);
+  border-radius: var(--radius-md);
+  font-family: var(--font-tile);
+  font-size: var(--fs-lg);
+  color: var(--color-deep-blue-gray);
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-bounce);
+}
+
+.wordItem:hover {
+  transform: scale(1.05);
+}
+
+.checkmark {
+  font-size: var(--fs-xs);
+  color: var(--color-mint-green);
+  font-family: var(--font-sans);
+}
+
+.wordText {
+  letter-spacing: 1px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes panelUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes sparkle {
+  from { opacity: 0.4; transform: scale(0.8); }
+  to   { opacity: 1;   transform: scale(1.2); }
+}

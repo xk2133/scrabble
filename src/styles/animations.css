@@ -1,0 +1,124 @@
+/* ===== Keyframe Animations ===== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.15);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Utility animation classes */
+.anim-fade-in {
+  animation: fadeIn var(--duration-normal) var(--ease-smooth) both;
+}
+
+.anim-fade-out {
+  animation: fadeOut var(--duration-normal) var(--ease-smooth) both;
+}
+
+.anim-slide-up {
+  animation: slideUp var(--duration-slow) var(--ease-bounce) both;
+}
+
+.anim-slide-down {
+  animation: slideDown var(--duration-slow) var(--ease-bounce) both;
+}
+
+.anim-scale-in {
+  animation: scaleIn var(--duration-normal) var(--ease-bounce) both;
+}
+
+.anim-bounce {
+  animation: bounce var(--duration-normal) var(--ease-bounce) both;
+}
+
+.anim-shake {
+  animation: shake var(--duration-normal) var(--ease-smooth) both;
+}
+
+.anim-float {
+  animation: float 3s var(--ease-smooth) infinite;
+}

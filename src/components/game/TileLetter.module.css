@@ -1,0 +1,145 @@
+/* ===== TileLetter - 字母牌 ===== */
+
+.tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFEF9;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-sm);
+  box-shadow:
+    4px 4px 8px rgba(107, 78, 61, 0.12),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.9),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform var(--duration-fast) var(--ease-bounce),
+    box-shadow var(--duration-fast) var(--ease-bounce),
+    border-color var(--duration-fast) var(--ease-bounce);
+  overflow: hidden;
+}
+
+/* ===== Sizes ===== */
+
+.rack {
+  width: 52px;
+  height: 52px;
+}
+.rack .letter {
+  font-size: 1.5rem;
+}
+.rack .points {
+  font-size: 10px;
+}
+
+.board {
+  width: 42px;
+  height: 42px;
+}
+.board .letter {
+  font-size: 1.25rem;
+}
+.board .points {
+  font-size: 9px;
+}
+
+.result {
+  width: 36px;
+  height: 36px;
+}
+.result .letter {
+  font-size: 1.05rem;
+}
+.result .points {
+  font-size: 8px;
+}
+
+/* ===== Typography ===== */
+
+.letter {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: var(--fw-bold);
+  color: var(--color-warm-brown);
+  line-height: 1;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.points {
+  position: absolute;
+  bottom: 3px;
+  right: 5px;
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  color: var(--color-warm-brown);
+  line-height: 1;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ===== States ===== */
+
+/* default: no extra styling */
+
+/* hover: float up slightly */
+.hover {
+  transform: translateY(-2px);
+  box-shadow:
+    4px 6px 12px rgba(107, 78, 61, 0.18),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.9),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.tile:hover:not(.disabled):not(.selected):not(.placed) {
+  transform: translateY(-2px);
+  box-shadow:
+    4px 6px 12px rgba(107, 78, 61, 0.18),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.9),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* selected: sun yellow border + enlarged */
+.selected {
+  border-color: var(--color-sunny-yellow);
+  border-width: 2.5px;
+  transform: scale(1.05);
+  box-shadow:
+    0 0 0 3px rgba(255, 210, 63, 0.35),
+    4px 4px 10px rgba(107, 78, 61, 0.15),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.9),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.selected:hover {
+  transform: scale(1.05) translateY(-2px);
+}
+
+/* dragging: deeper shadow */
+.dragging {
+  box-shadow:
+    0 8px 24px rgba(107, 78, 61, 0.28),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.8),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.06);
+  transform: scale(1.08);
+  z-index: 10;
+}
+
+/* placed: on-board tile, slightly muted */
+.placed {
+  cursor: default;
+  background: #FDF6E3;
+}
+
+.placed:hover {
+  transform: none;
+}
+
+/* ===== Disabled ===== */
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

@@ -1,0 +1,144 @@
+/* ===== PronunciationButton - 发音按钮 ===== */
+
+@keyframes soundPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes ringExpand1 {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes ringExpand2 {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes ringExpand3 {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-full);
+  box-shadow:
+    4px 4px 8px rgba(0, 0, 0, 0.08),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition:
+    transform 250ms var(--ease-bounce),
+    background var(--duration-normal) var(--ease-smooth),
+    box-shadow var(--duration-normal) var(--ease-smooth);
+  padding: 0;
+  font-family: var(--font-sans);
+}
+
+.button:hover {
+  transform: scale(1.12);
+}
+
+.sm {
+  width: 40px;
+  height: 40px;
+}
+
+.md {
+  width: 56px;
+  height: 56px;
+}
+
+.sm .icon {
+  font-size: 18px;
+}
+
+.md .icon {
+  font-size: 24px;
+}
+
+.icon {
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.speaking {
+  background: var(--color-primary);
+  animation: soundPulse 400ms var(--ease-bounce) infinite;
+  box-shadow:
+    0 0 0 4px rgba(255, 210, 63, 0.3),
+    4px 4px 8px rgba(0, 0, 0, 0.08),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7),
+    inset 1px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.ring1,
+.ring2,
+.ring3 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-primary);
+  pointer-events: none;
+}
+
+.ring1 {
+  width: 100%;
+  height: 100%;
+  animation: ringExpand1 1.2s var(--ease-smooth) infinite;
+  animation-delay: 0s;
+}
+
+.ring2 {
+  width: 100%;
+  height: 100%;
+  animation: ringExpand2 1.2s var(--ease-smooth) infinite;
+  animation-delay: 0.4s;
+}
+
+.ring3 {
+  width: 100%;
+  height: 100%;
+  animation: ringExpand3 1.2s var(--ease-smooth) infinite;
+  animation-delay: 0.8s;
+}

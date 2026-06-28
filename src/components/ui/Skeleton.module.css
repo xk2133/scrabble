@@ -1,0 +1,82 @@
+/* ===== Skeleton CSS Module ===== */
+
+/* ===== Base Pulse ===== */
+
+.pulse {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-khaki);
+}
+
+.pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 162, 97, 0.2) 40%,
+    rgba(244, 162, 97, 0.35) 50%,
+    rgba(244, 162, 97, 0.2) 60%,
+    transparent 100%
+  );
+  animation: warmPulse 1.6s infinite ease-in-out;
+}
+
+/* ===== Text ===== */
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.line {
+  height: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-khaki);
+  position: relative;
+  overflow: hidden;
+}
+
+.line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 162, 97, 0.2) 40%,
+    rgba(244, 162, 97, 0.35) 50%,
+    rgba(244, 162, 97, 0.2) 60%,
+    transparent 100%
+  );
+  animation: warmPulse 1.6s infinite ease-in-out;
+}
+
+.lineLast {
+  width: 60%;
+}
+
+/* ===== Rect ===== */
+
+.rect {
+  border-radius: var(--radius-md);
+}
+
+/* ===== Circle ===== */
+
+.circle {
+  border-radius: 50%;
+}
+
+/* ===== Animation ===== */
+
+@keyframes warmPulse {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

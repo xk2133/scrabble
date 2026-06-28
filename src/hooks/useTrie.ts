@@ -1,0 +1,193 @@
+import { useState, useEffect, useRef } from 'react';
+import { Trie, createTrie } from '../engine/trie';
+
+// Lazy-load the word list on first use
+let cachedWords: string[] | null = null;
+
+async function loadWords(): Promise<string[]> {
+  if (cachedWords) return cachedWords;
+
+  try {
+    const { WORD_LIST } = await import('../data/wordList');
+    cachedWords = WORD_LIST;
+    return cachedWords;
+  } catch {
+    // Ultimate fallback — minimal common words
+    cachedWords = ['A','I','AT','BE','BY','DO','GO','HE','HI','IF','IN','IS','IT','ME','MY',
+      'NO','OF','OH','ON','OR','SO','TO','UP','US','WE','ACE','ACT','ADD','AGE','AGO','AID',
+      'AIM','AIR','ALL','AND','ANY','APE','ARC','ARE','ARM','ART','ASK','ATE','AWE','AXE',
+      'BAD','BAG','BAN','BAR','BAT','BAY','BED','BET','BIG','BIT','BOW','BOX','BOY','BUG',
+      'BUS','BUT','BUY','CAB','CAN','CAP','CAR','CAT','COW','CRY','CUB','CUP','CUT','DAD',
+      'DAY','DID','DIG','DIM','DIP','DOG','DOT','DRY','DUE','EAR','EAT','EGG','ELF','END',
+      'ERA','EVE','EYE','FAN','FAR','FAT','FEW','FIG','FIN','FIT','FLY','FOE','FOG','FOR',
+      'FOX','FRY','FUN','GAP','GAS','GEL','GET','GOD','GOT','GUM','GUN','GUT','GUY','GYM',
+      'HAD','HAM','HAS','HAT','HEN','HER','HID','HIM','HIP','HIS','HIT','HOG','HOP','HOT',
+      'HOW','HUG','HUT','ICE','ICY','ILL','INK','INN','ION','IVY','JAB','JAM','JAR','JAW',
+      'JAY','JET','JIG','JOB','JOG','JOT','JOY','JUG','KEY','KID','KIN','KIT','LAB','LAD',
+      'LAG','LAP','LAW','LAY','LED','LEG','LET','LID','LIE','LIP','LIT','LOG','LOT','LOW',
+      'MAD','MAN','MAP','MAT','MAY','MEN','MET','MIX','MOB','MOD','MOM','MOP','MOW','MUD',
+      'MUG','NAB','NAG','NAP','NET','NEW','NIL','NOT','NOW','NUN','NUT','OAK','OAR','OAT',
+      'ODD','OIL','OLD','ONE','OPT','ORB','ORE','OUR','OUT','OWE','OWL','OWN','PAD','PAL',
+      'PAN','PAW','PAY','PEA','PEG','PEN','PET','PIE','PIG','PIN','PIT','POD','POT','PRY',
+      'PUB','PUN','RAG','RAM','RAN','RAP','RAT','RAW','RAY','RED','RIB','RID','RIG','RIM',
+      'RIP','ROB','ROD','ROT','ROW','RUB','RUG','RUN','RUT','SAD','SAP','SAT','SAW','SAY',
+      'SEA','SET','SEW','SHE','SHY','SIN','SIP','SIR','SIT','SIX','SKI','SKY','SLY','SOB',
+      'SON','SOW','SPA','SPY','SUB','SUM','SUN','TAB','TAG','TAN','TAP','TAR','TAX','TEA',
+      'TEN','THE','TIE','TIN','TIP','TOE','TON','TOO','TOP','TOW','TOY','TRY','TUB','TUG',
+      'TWO','URN','USE','VAN','VAT','VET','VOW','WAD','WAR','WAS','WAX','WAY','WEB','WET',
+      'WHO','WHY','WIN','WIT','WOE','WOK','WON','WOW','YAK','YAM','YAP','YEA','YES','YET',
+      'YOU','ZAP','ZEN','ZIP','ZOO','ABLE','ACID','ALSO','AREA','ARMY','AWAY','BACK','BALL',
+      'BAND','BANK','BASE','BATH','BEAR','BEAT','BEEN','BELL','BEST','BILL','BIRD','BITE',
+      'BLOW','BLUE','BOAT','BODY','BOLD','BOMB','BOND','BONE','BOOK','BORN','BOSS','BOTH',
+      'BOWL','BURN','BUSY','CALL','CALM','CAME','CAMP','CARD','CARE','CART','CASE','CASH',
+      'CAST','CAVE','CELL','CHAT','CHIP','CITY','CLUB','CLUE','COAL','COAT','CODE','COIN',
+      'COLD','COME','COOK','COOL','COPY','CORE','COST','CREW','CROP','CURE','CUTE','DARE',
+      'DARK','DASH','DATA','DATE','DAWN','DEAD','DEAL','DEAR','DEBT','DECK','DEED','DEEP',
+      'DEER','DEMO','DENY','DESK','DIAL','DICE','DIET','DIRT','DISH','DOCK','DOES','DOME',
+      'DONE','DOOM','DOOR','DOSE','DOWN','DRAG','DRAW','DREW','DROP','DRUG','DRUM','DUAL',
+      'DUCK','DULL','DUMP','DUST','DUTY','EACH','EARN','EASE','EAST','EASY','EDGE','EDIT',
+      'ELSE','EMIT','ENVY','EPIC','EVEN','EVER','EVIL','EXAM','EXIT','FACE','FACT','FADE',
+      'FAIL','FAIR','FAKE','FALL','FAME','FARE','FARM','FAST','FATE','FEAR','FEED','FEEL',
+      'FEET','FELL','FELT','FILE','FILL','FILM','FIND','FINE','FIRE','FIRM','FISH','FIVE',
+      'FLAG','FLAT','FLED','FLEW','FLIP','FLOW','FOAM','FOLD','FOLK','FOND','FONT','FOOD',
+      'FOOL','FOOT','FORD','FORE','FORK','FORM','FORT','FOUR','FREE','FROM','FUEL','FULL',
+      'FUND','FURY','GAIN','GAME','GANG','GATE','GAVE','GAZE','GEAR','GENE','GIFT','GIRL',
+      'GIVE','GLAD','GLOW','GLUE','GOAL','GOAT','GOES','GOLD','GOLF','GONE','GOOD','GRAB',
+      'GRAY','GREW','GREY','GRIM','GRIN','GRIP','GROW','HACK','HAIL','HAIR','HALF','HALL',
+      'HALT','HAND','HANG','HARD','HARM','HATE','HAUL','HAVE','HEAD','HEAL','HEAP','HEAR',
+      'HEAT','HEEL','HELD','HELL','HELP','HERE','HERO','HIGH','HIKE','HILL','HINT','HIRE',
+      'HOLD','HOLE','HOME','HOPE','HORN','HOST','HOUR','HUGE','HUNG','HUNT','HURT','ICON',
+      'IDEA','IDLE','INCH','INTO','IRON','ISLE','ITEM','JACK','JADE','JAIL','JAZZ','JEAN',
+      'JOIN','JOKE','JUMP','JUNE','JURY','JUST','KEEN','KEEP','KEPT','KICK','KILL','KIND',
+      'KING','KISS','KITE','KNEE','KNEW','KNIT','KNOB','KNOT','KNOW','LACE','LACK','LAID',
+      'LAKE','LAMB','LAME','LAMP','LAND','LANE','LAST','LATE','LAWN','LAZY','LEAD','LEAF',
+      'LEAK','LEAN','LEAP','LEFT','LEND','LENS','LENT','LESS','LIAR','LICK','LIFE','LIFT',
+      'LIKE','LIMB','LIME','LIMP','LINE','LINK','LION','LIST','LIVE','LOAD','LOAF','LOAN',
+      'LOCK','LOFT','LOGO','LONE','LONG','LOOK','LORD','LORE','LOSE','LOSS','LOST','LOUD',
+      'LOVE','LUCK','LULL','LUMP','LUNG','LURE','LUST','MADE','MAIL','MAIN','MAKE','MALE',
+      'MALL','MALT','MANY','MARK','MASK','MASS','MATE','MAZE','MEAL','MEAN','MEAT','MEET',
+      'MELT','MEMO','MENU','MERE','MESH','MESS','MILD','MILE','MILK','MILL','MIME','MIND',
+      'MINE','MINI','MINT','MISS','MIST','MOAN','MOAT','MOCK','MODE','MOLD','MOLE','MOOD',
+      'MOON','MORE','MOSS','MOST','MOTH','MOVE','MUCH','MUST','MYTH','NAIL','NAME','NAVY',
+      'NEAR','NEAT','NECK','NEED','NEST','NEWS','NEXT','NICE','NINE','NODE','NONE','NOSE',
+      'NOTE','NOUN','OATH','OBEY','ODDS','OKAY','OMIT','ONCE','ONLY','ONTO','OPEN','ORAL',
+      'OVAL','OVEN','OVER','PACE','PACK','PAGE','PAID','PAIN','PAIR','PALE','PALM','PARK',
+      'PART','PASS','PAST','PATH','PEAK','PEAR','PEEL','PEER','PICK','PIER','PILE','PINE',
+      'PINK','PIPE','PLAN','PLAY','PLEA','PLOT','PLOY','PLUG','PLUM','PLUS','POEM','POET',
+      'POKE','POLE','POLL','POND','POOL','POOR','PORK','PORT','POSE','POST','POUR','PRAY',
+      'PREY','PROP','PULL','PUMP','PURE','PUSH','QUIT','QUIZ','RACE','RACK','RAGE','RAID',
+      'RAIL','RAIN','RANK','RARE','RASH','RATE','READ','REAL','REAP','REAR','RELY','RENT',
+      'REST','RICE','RICH','RIDE','RING','RIOT','RISE','RISK','ROAD','ROAM','ROBE','ROCK',
+      'RODE','ROLE','ROLL','ROOF','ROOM','ROOT','ROPE','ROSE','RUDE','RUIN','RULE','RUSH',
+      'RUST','SACK','SAFE','SAID','SAIL','SAKE','SALE','SALT','SAME','SAND','SANG','SANK',
+      'SAVE','SCAN','SEAL','SEAT','SEED','SEEK','SEEM','SEEN','SELF','SELL','SEND','SENT',
+      'SHED','SHIP','SHOP','SHOT','SHOW','SHUT','SICK','SIDE','SIGH','SIGN','SILK','SING',
+      'SINK','SITE','SIZE','SKIN','SKIP','SLAM','SLAP','SLID','SLIM','SLIP','SLOT','SLOW',
+      'SLUG','SNAP','SNOW','SOAK','SOAP','SOAR','SOCK','SODA','SOFA','SOFT','SOIL','SOLD',
+      'SOLE','SOME','SONG','SOON','SORE','SORT','SOUL','SOUR','SPAN','SPIN','SPIT','SPOT',
+      'STAR','STAY','STEM','STEP','STIR','STOP','STUD','SUCH','SUIT','SURE','SURF','SWAP',
+      'SWIM','TACK','TAIL','TAKE','TALE','TALK','TALL','TAME','TANK','TAPE','TASK','TAXI',
+      'TEAM','TEAR','TELL','TEND','TENT','TERM','TEST','TEXT','THAN','THAT','THEM','THEN',
+      'THEY','THIN','THIS','THUS','TICK','TIDE','TIED','TILE','TILL','TILT','TIME','TINY',
+      'TIRE','TOAD','TOIL','TOLD','TOLL','TOMB','TONE','TOOK','TOOL','TORE','TORN','TOUR',
+      'TOWN','TRAP','TRAY','TREE','TREK','TRIM','TRIO','TRIP','TRUE','TUBE','TUCK','TUNA',
+      'TUNE','TURF','TURN','TWIN','TYPE','UGLY','UNDO','UNIT','UPON','URGE','USED','USER',
+      'VAIN','VARY','VAST','VEIL','VEIN','VENT','VERB','VERY','VETO','VICE','VIEW','VINE',
+      'VOID','VOLT','VOTE','WADE','WAGE','WAIL','WAIT','WAKE','WALK','WALL','WAND','WANT',
+      'WARD','WARM','WARN','WARP','WARY','WASH','WAVE','WAVY','WAYS','WEAK','WEAR','WEED',
+      'WEEK','WELD','WELL','WENT','WERE','WEST','WHAT','WHEN','WHIP','WHOM','WICK','WIDE',
+      'WIFE','WILD','WILL','WILT','WIND','WINE','WING','WINK','WIPE','WIRE','WISE','WISH',
+      'WITH','WOKE','WOLF','WOOD','WOOL','WORD','WORE','WORK','WORM','WORN','WRAP','YARD',
+      'YARN','YEAR','YELL','YOGA','YOKE','YOLK','YOUR','ZEAL','ZERO','ZINC','ZONE','ZOOM',
+      'ABOUT','ABOVE','ABUSE','ACTOR','ADMIT','ADOPT','ADULT','AFTER','AGAIN','AGENT','AGREE',
+      'AHEAD','ALARM','ALBUM','ALERT','ALIEN','ALIKE','ALIVE','ALLEY','ALLOW','ALONE','ALONG',
+      'ALTER','AMONG','AMPLE','ANGEL','ANGER','ANGLE','ANGRY','APART','APPLE','APPLY','ARENA',
+      'ARGUE','ARISE','ARROW','AVOID','AWARD','AWARE','BACON','BADGE','BASIC','BATCH','BEACH',
+      'BEARD','BEAST','BEGIN','BEING','BELOW','BENCH','BERRY','BIRTH','BLACK','BLADE','BLAME',
+      'BLANK','BLAST','BLAZE','BLEED','BLEND','BLESS','BLIND','BLINK','BLISS','BLOCK','BLOOD',
+      'BLOOM','BOARD','BONUS','BOOTH','BOUND','BRAIN','BRAND','BRAVE','BREAD','BREAK','BREED',
+      'BRICK','BRIDE','BRIEF','BRING','BROAD','BROKE','BROOK','BROWN','BRUSH','BUILD','BUILT',
+      'BUNCH','BURST','CABIN','CABLE','CARRY','CATCH','CAUSE','CHAIN','CHAIR','CHAOS','CHARM',
+      'CHART','CHASE','CHEAP','CHECK','CHEEK','CHEER','CHESS','CHEST','CHIEF','CHILD','CHUNK',
+      'CIVIL','CLAIM','CLASH','CLASS','CLEAN','CLEAR','CLERK','CLICK','CLIFF','CLIMB','CLING',
+      'CLOCK','CLONE','CLOSE','CLOTH','CLOUD','COACH','COAST','COLOR','COMET','COMIC','CORAL',
+      'COUNT','COURT','COVER','CRACK','CRAFT','CRANE','CRASH','CRAZY','CREAM','CREEK','CRIME',
+      'CROSS','CROWD','CROWN','CRUDE','CRUEL','CRUSH','CURVE','CYCLE','DAILY','DANCE','DECAY',
+      'DELAY','DELTA','DEMON','DENSE','DEPTH','DEVIL','DIRTY','DOUBT','DOUGH','DOZEN','DRAFT',
+      'DRAIN','DRAMA','DRANK','DRAWN','DREAM','DRESS','DRIED','DRIFT','DRILL','DRINK','DRIVE',
+      'DRONE','DROVE','DROWN','EAGER','EAGLE','EARLY','EARTH','EIGHT','ELECT','ELITE','EMPTY',
+      'ENEMY','ENJOY','ENTER','ENTRY','EQUAL','ERROR','EVENT','EVERY','EXACT','EXILE','EXIST',
+      'EXTRA','FAITH','FALSE','FANCY','FATAL','FAULT','FEAST','FENCE','FERRY','FIBER','FIELD',
+      'FIFTH','FIFTY','FIGHT','FINAL','FIRST','FIXED','FLAME','FLASH','FLEET','FLESH','FLOAT',
+      'FLOOD','FLOOR','FLOUR','FLUID','FLUSH','FOCUS','FORCE','FORGE','FORTH','FORUM','FOUND',
+      'FRAME','FRANK','FRAUD','FRESH','FRONT','FROST','FROWN','FROZE','FRUIT','FUNNY','GHOST',
+      'GIANT','GIVEN','GLASS','GLOBE','GLOOM','GLORY','GLOSS','GLOVE','GRACE','GRADE','GRAIN',
+      'GRAND','GRANT','GRAPH','GRASP','GRASS','GRAVE','GREAT','GREEN','GREET','GRIEF','GRIND',
+      'GROAN','GROOM','GROSS','GROUP','GROVE','GROWN','GUARD','GUESS','GUEST','GUIDE','GUILD',
+      'GUILT','HAPPY','HARSH','HAVEN','HEART','HEAVY','HENCE','HONOR','HORSE','HOTEL','HOUSE',
+      'HUMAN','HUMOR','IDEAL','IMAGE','IMPLY','INDEX','INNER','INPUT','IRONY','ISSUE','JOINT',
+      'JUDGE','JUICE','JUICY','KNACK','KNIFE','KNOCK','KNOWN','LABEL','LARGE','LASER','LATER',
+      'LAUGH','LAYER','LEARN','LEASE','LEAST','LEAVE','LEGAL','LEMON','LEVEL','LEVER','LIGHT',
+      'LIMIT','LINEN','LIVER','LOCAL','LODGE','LOGIC','LOOSE','LOVER','LOWER','LUCKY','LUNCH',
+      'MAGIC','MAJOR','MAKER','MANOR','MAPLE','MARCH','MATCH','MAYOR','MEDIA','MERCY','MERGE',
+      'MERIT','METAL','METER','MIGHT','MINOR','MINUS','MIXED','MODEL','MONEY','MONTH','MORAL',
+      'MOTOR','MOUNT','MOUSE','MOUTH','MOVER','MOVIE','MUSIC','NAVAL','NERVE','NEVER','NIGHT',
+      'NOBLE','NOISE','NOISY','NORTH','NOTED','NOVEL','NURSE','OCCUR','OCEAN','OFFER','OFTEN',
+      'OLIVE','OPERA','ORDER','OTHER','OUGHT','OUTER','OWNER','PAINT','PANEL','PANIC','PAPER',
+      'PARTY','PASTE','PATCH','PAUSE','PEACE','PEARL','PENNY','PHASE','PHONE','PHOTO','PIANO',
+      'PIECE','PILOT','PINCH','PITCH','PIXEL','PIZZA','PLACE','PLAIN','PLANE','PLANK','PLANT',
+      'PLATE','PLAZA','PLEAD','PLUCK','PLUMB','PLUME','PLUMP','POINT','POLAR','POUND','POWER',
+      'PRESS','PRICE','PRIDE','PRIME','PRINT','PRIOR','PRIZE','PROBE','PROOF','PROSE','PROUD',
+      'PROVE','PROXY','PULSE','PUNCH','PUPIL','PUPPY','PURSE','QUEEN','QUERY','QUEST','QUEUE',
+      'QUICK','QUIET','QUILT','QUIRK','QUITE','QUOTA','QUOTE','RADAR','RADIO','RAISE','RALLY',
+      'RANCH','RANGE','RAPID','RATIO','REACH','REACT','READY','REALM','REBEL','REFER','REIGN',
+      'RELAX','REPLY','RIDER','RIDGE','RIFLE','RIGHT','RIGID','RISKY','RIVAL','RIVER','ROAST',
+      'ROBIN','ROBOT','ROCKY','ROGUE','ROMAN','ROUGH','ROUND','ROUTE','ROYAL','RULER','RURAL',
+      'SAINT','SALAD','SALON','SANDY','SATIN','SAUCE','SCALE','SCARE','SCENE','SCENT','SCOPE',
+      'SCORE','SCOUT','SEIZE','SENSE','SERVE','SETUP','SEVEN','SHADE','SHAFT','SHAKE','SHALL',
+      'SHAME','SHAPE','SHARE','SHARK','SHARP','SHAVE','SHEEP','SHEER','SHEET','SHELF','SHELL',
+      'SHIFT','SHINE','SHIRT','SHOCK','SHOOT','SHORT','SHOUT','SIGHT','SINCE','SIXTY','SKILL',
+      'SKULL','SLAVE','SLEEP','SLICE','SLIDE','SLOPE','SMALL','SMART','SMELL','SMILE','SMITH',
+      'SMOKE','SNAKE','SOLAR','SOLID','SOLVE','SORRY','SOUND','SOUTH','SPACE','SPARE','SPARK',
+      'SPEAK','SPEED','SPELL','SPEND','SPENT','SPICE','SPICY','SPINE','SPITE','SPLIT','SPOKE',
+      'SPOON','SPORT','SPRAY','SQUAD','STACK','STAFF','STAGE','STAKE','STALE','STALL','STAMP',
+      'STAND','STARE','START','STATE','STEAK','STEAL','STEAM','STEEL','STEEP','STEER','STERN',
+      'STICK','STIFF','STILL','STING','STOCK','STOLE','STONE','STOOD','STOOL','STORE','STORM',
+      'STORY','STOVE','STRAP','STRAW','STRIP','STUCK','STUDY','STUFF','STYLE','SUGAR','SUITE',
+      'SUNNY','SUPER','SURGE','SWAMP','SWEAR','SWEEP','SWEET','SWEPT','SWIFT','SWING','SWORD',
+      'SWORE','SWORN','TABLE','TASTE','TEACH','TEETH','THANK','THEFT','THEIR','THEME','THERE',
+      'THICK','THIEF','THIGH','THING','THINK','THIRD','THOSE','THREE','THREW','THROW','THUMB',
+      'TIGER','TIGHT','TITLE','TODAY','TOKEN','TOPIC','TORCH','TOTAL','TOUCH','TOUGH','TOWEL',
+      'TOWER','TOXIC','TRACE','TRACK','TRADE','TRAIL','TRAIN','TRAIT','TRASH','TREAT','TREND',
+      'TRICK','TRIED','TROOP','TRUCK','TRULY','TRUNK','TRUST','TRUTH','TUMOR','TWIST','ULTRA',
+      'UNION','UNITE','UNITY','UNTIL','UPPER','UPSET','URBAN','USAGE','USUAL','UTTER','VALID',
+      'VALUE','VALVE','VAULT','VENUE','VERSE','VIDEO','VIGOR','VIRAL','VIRUS','VISIT','VITAL',
+      'VIVID','VOCAL','VOICE','VOTER','WAGON','WASTE','WATCH','WATER','WEARY','WEAVE','WEDGE',
+      'WEIRD','WHALE','WHEAT','WHEEL','WHERE','WHICH','WHILE','WHITE','WHOLE','WHOSE','WIDER',
+      'WIDOW','WIDTH','WITCH','WOMAN','WOMEN','WORLD','WORRY','WORSE','WORST','WORTH','WOULD',
+      'WOUND','WRATH','WRIST','WRITE','WRONG','WROTE','YACHT','YIELD','YOUNG','YOUTH'];
+    return cachedWords;
+  }
+}
+
+export function useTrie(): { trie: Trie | null; loading: boolean; error: string | null } {
+  const [trie, setTrie] = useState<Trie | null>(null);
+  const [loading, setLoading] = useState(true);
+  const loadingRef = useRef(false);
+
+  useEffect(() => {
+    if (loadingRef.current) return;
+    loadingRef.current = true;
+
+    loadWords().then(words => {
+      const t = createTrie(words);
+      setTrie(t);
+      setLoading(false);
+    }).catch(() => {
+      setTrie(null);
+      setLoading(false);
+    });
+  }, []);
+
+  return { trie, loading, error: null };
+}

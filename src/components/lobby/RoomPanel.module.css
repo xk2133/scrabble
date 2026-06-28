@@ -1,0 +1,200 @@
+/* ===== RoomPanel - 房间管理 ===== */
+
+.panel {
+  background: var(--color-khaki);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    4px 4px 12px rgba(27, 73, 101, 0.08),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(27, 73, 101, 0.08);
+}
+
+.tab {
+  flex: 1;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast),
+    color var(--duration-fast);
+  border: none;
+  font-family: var(--font-sans);
+  background: transparent;
+  color: var(--color-warm-brown);
+}
+
+.tab:hover {
+  background: rgba(27, 73, 101, 0.04);
+}
+
+.activeTab {
+  background: var(--color-cream-white);
+  color: var(--color-deep-blue-gray);
+  border-bottom: 3px solid var(--color-sunny-yellow);
+}
+
+.content {
+  padding: var(--space-2);
+}
+
+.tabContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.createBtn {
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-sunny-yellow);
+  color: var(--color-deep-blue-gray);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  box-shadow:
+    0 4px 16px rgba(107, 78, 61, 0.16),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.6);
+  transition: transform var(--duration-fast) var(--ease-bounce);
+}
+
+.createBtn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.createBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.codeDisplay {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-deep-blue-gray);
+  letter-spacing: 6px;
+  line-height: var(--lh-tight);
+}
+
+.copyBtn {
+  padding: 6px var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-deep-blue-gray);
+  background: var(--color-cream-white);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.06),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+  transition: transform var(--duration-fast) var(--ease-bounce);
+}
+
+.copyBtn:hover {
+  transform: scale(1.05);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-warm-brown);
+}
+
+.label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-warm-brown);
+}
+
+.joinRow {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  max-width: 320px;
+}
+
+.codeInput {
+  flex: 1;
+  padding: var(--space-2) var(--space-2);
+  font-size: var(--fs-lg);
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: var(--fw-bold);
+  letter-spacing: 4px;
+  text-align: center;
+  color: var(--color-deep-blue-gray);
+  background: var(--color-cream-white);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-md);
+  outline: none;
+  text-transform: uppercase;
+  transition: border-color var(--duration-fast);
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.04),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.codeInput:focus {
+  border-color: var(--color-sunny-yellow);
+}
+
+.codeInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.joinBtn {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-mint-green);
+  color: #fff;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  box-shadow:
+    0 4px 16px rgba(46, 196, 182, 0.2),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+  transition:
+    transform var(--duration-fast) var(--ease-bounce);
+}
+
+.joinBtn:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.joinBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .code {
+    font-size: var(--fs-2xl);
+    letter-spacing: 3px;
+  }
+
+  .codeInput {
+    font-size: var(--fs-base);
+    letter-spacing: 2px;
+  }
+}

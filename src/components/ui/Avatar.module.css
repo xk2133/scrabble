@@ -1,0 +1,95 @@
+/* ===== Avatar CSS Module ===== */
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 4px 16px rgba(107, 78, 61, 0.16),
+    0 1px 2px rgba(27, 73, 101, 0.04);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ===== Sizes ===== */
+
+.sm {
+  width: 32px;
+  height: 32px;
+}
+
+.md {
+  width: 48px;
+  height: 48px;
+}
+
+.lg {
+  width: 64px;
+  height: 64px;
+}
+
+/* ===== Initials ===== */
+
+.initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--color-deep-blue-gray);
+  font-weight: var(--fw-bold);
+  font-family: var(--font-sans);
+  user-select: none;
+}
+
+.sm .initials {
+  font-size: 10px;
+}
+
+.md .initials {
+  font-size: var(--fs-sm);
+}
+
+.lg .initials {
+  font-size: var(--fs-lg);
+}
+
+/* ===== Image ===== */
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ===== Online dot ===== */
+
+.onlineDot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-mint-green);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.sm .onlineDot {
+  width: 8px;
+  height: 8px;
+  bottom: 0;
+  right: 0;
+}
+
+.lg .onlineDot {
+  width: 12px;
+  height: 12px;
+  bottom: 3px;
+  right: 3px;
+}

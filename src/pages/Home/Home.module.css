@@ -1,0 +1,402 @@
+/* ===== Home Page - 首页 ===== */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-3) 72px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  gap: var(--space-2);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.main::before,
+.main::after {
+  content: '';
+  flex: 1 1 0;
+  min-height: var(--space-1);
+}
+
+/* ----- Hero ----- */
+
+.hero {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.owlImg {
+  width: 44px;
+  height: 44px;
+  animation: float 3s var(--ease-smooth) infinite;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+.title {
+  font-family: var(--font-tile);
+  font-size: 2rem;
+  font-weight: var(--fw-bold);
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+}
+
+/* ----- Player Name Section ----- */
+
+.nameSection {
+  width: 100%;
+  max-width: 360px;
+  flex-shrink: 0;
+}
+
+.nameSetup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.greeting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.04),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.greetingText {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+/* ----- Game Mode Section ----- */
+
+.modeSection {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.modeTabs {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+  padding: 3px;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.04),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.modeTab {
+  position: relative;
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  padding: 6px 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-smooth),
+    color var(--duration-fast) var(--ease-smooth);
+}
+
+.modeTab:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.modeTabActive {
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow:
+    1px 1px 2px rgba(0, 0, 0, 0.06),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.modeCheck {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--color-sunny-yellow);
+  color: var(--color-deep-blue-gray);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.modeContent {
+  /* auto-size to content */
+}
+
+/* ----- Game Variant Section ----- */
+
+.variantSection {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.variantTabs {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.variantTab {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-2) var(--space-1);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.04),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-smooth),
+    box-shadow var(--duration-fast) var(--ease-smooth);
+}
+
+.variantCheck {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--color-sunny-yellow);
+  color: var(--color-deep-blue-gray);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.variantTab:hover {
+  border-color: var(--color-primary);
+}
+
+.variantTabActive {
+  border-color: var(--color-primary);
+  box-shadow:
+    0 0 0 2px rgba(255, 210, 63, 0.3);
+}
+
+.variantIcon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.variantTitle {
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.variantDesc {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+/* ----- Start Section ----- */
+
+.startSection {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* ----- Stats Section ----- */
+
+.statsSection {
+  display: flex;
+  gap: var(--space-2);
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.statCard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 82px;
+  padding: var(--space-2) var(--space-1);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.04),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.statValue {
+  font-family: var(--font-tile);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  color: var(--color-primary);
+  line-height: 1.1;
+}
+
+.statLabel {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ----- Responsive ----- */
+
+@media (max-width: 480px) {
+  .main {
+    padding: 0 var(--space-2) 64px;
+    gap: var(--space-1);
+  }
+
+  .owlImg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .modeTab {
+    font-size: 13px;
+    padding: 5px 0;
+  }
+
+  .variantTab {
+    padding: var(--space-1) 6px;
+    gap: 2px;
+  }
+
+  .variantIcon {
+    font-size: 1rem;
+  }
+
+  .variantTitle {
+    font-size: var(--fs-xs);
+  }
+
+  .variantDesc {
+    font-size: 10px;
+  }
+
+  .statValue {
+    font-size: var(--fs-base);
+  }
+}
+
+@media (max-height: 700px) {
+  .main {
+    padding: 0 var(--space-2) 60px;
+    gap: var(--space-1);
+  }
+
+  .owlImg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
+  .variantTab {
+    padding: 6px 4px;
+    gap: 2px;
+  }
+
+  .variantIcon {
+    font-size: 0.9rem;
+  }
+
+  .variantTitle {
+    font-size: 11px;
+  }
+
+  .variantDesc {
+    font-size: 10px;
+  }
+
+  .statCard {
+    min-height: 64px;
+    padding: var(--space-1) var(--space-1);
+    gap: 4px;
+  }
+
+  .modeTab {
+    padding: 4px 0;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 769px) {
+  .main {
+    padding: var(--space-3) var(--space-3) 80px;
+    max-width: 520px;
+  }
+
+  .owlImg {
+    width: 52px;
+    height: 52px;
+  }
+
+  .title {
+    font-size: 2.4rem;
+  }
+}
