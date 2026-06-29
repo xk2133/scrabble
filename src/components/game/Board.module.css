@@ -19,6 +19,10 @@
   display: block;
   max-width: min(100vw - 32px, 600px);
   height: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .cursorPointer {

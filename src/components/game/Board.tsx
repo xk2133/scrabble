@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useRef, useEffect, useCallback, useState, forwardRef, useImperativeHandle, useMemo } from 'react';
 import type { BoardState, CellType } from '../../types/board';
 import type { PlacedTileInput } from '../../types/game';
 import { BOARD_SIZE } from '../../constants/board';
@@ -160,6 +160,8 @@ const Board = forwardRef<BoardHandle, BoardProps>(({
     getCanvas: () => canvasRef.current,
   }));
   const containerRef = useRef<HTMLDivElement>(null);
+  const isTouchDevice = useMemo(() => typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0), []);
+  const touchActiveRef = useRef(false);
   const [tooltip, setTooltip] = useState<{ text: string; left: number; top: number } | null>(null);
 
   const draw = useCallback(() => {
@@ -295,18 +297,23 @@ const Board = forwardRef<BoardHandle, BoardProps>(({
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (disabled) return;
+      // On touch devices, skip click if it was triggered by a touch (avoid double-fire)
+      if (isTouchDevice && touchActiveRef.current) {
+        touchActiveRef.current = false;
+        return;
+      }
       const pos = getCellFromEvent(e.clientX, e.clientY);
       if (pos) onCellClick(pos.row, pos.col);
     },
-    [disabled, getCellFromEvent, onCellClick],
+    [disabled, getCellFromEvent, onCellClick, isTouchDevice],
   );
 
   const handleTouch = useCallback(
     (e: React.TouchEvent<HTMLCanvasElement>) => {
       if (disabled) return;
-      e.preventDefault();
       const touch = e.touches[0];
       if (!touch) return;
+      touchActiveRef.current = true;
       const pos = getCellFromEvent(touch.clientX, touch.clientY);
       if (pos) onCellClick(pos.row, pos.col);
     },

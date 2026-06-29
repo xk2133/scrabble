@@ -8,6 +8,10 @@
   background: #FFFEF9;
   border: 1.5px solid rgba(255, 255, 255, 0.8);
   border-radius: var(--radius-sm);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
   box-shadow:
     4px 4px 8px rgba(107, 78, 61, 0.12),
     inset -2px -2px 4px rgba(255, 255, 255, 0.9),
