@@ -36,14 +36,12 @@ const Game: React.FC = () => {
     showResult,
     errorMessage,
     hintsRemaining,
-    isPaused,
     initGame,
     selectTile,
     placeTile,
     removePlacement,
     recallLast,
     useHint,
-    togglePause,
     submitMove,
     skipTurn,
     closeScorePanel,
@@ -77,9 +75,7 @@ const Game: React.FC = () => {
   // Handle continue/restart from prompt
   const handleContinueGame = useCallback(() => {
     setShowContinuePrompt(false);
-    // Game state already loaded, just unpause if paused
-    if (isPaused) togglePause();
-  }, [isPaused, togglePause]);
+  }, []);
 
   const handleRestartGame = useCallback(() => {
     setShowContinuePrompt(false);
@@ -100,7 +96,7 @@ const Game: React.FC = () => {
   // Handle cell click
   const handleCellClick = useCallback(
     (row: number, col: number) => {
-      if (!gameState || gameState.phase !== 'PLAYING' || isAiThinking || isPaused) return;
+      if (!gameState || gameState.phase !== 'PLAYING' || isAiThinking) return;
       const currentPlayer = gameState.players[gameState.currentPlayerIndex];
       if (currentPlayer.isAI) return;
       const key = `${row},${col}`;
@@ -109,18 +105,18 @@ const Game: React.FC = () => {
       if (gameState.board[row][col].tile !== null) { addToast('warning', '该位置已有字母块'); return; }
       placeTile(row, col);
     },
-    [gameState, isAiThinking, isPaused, pendingPlacements, selectedTileIndex, placeTile, removePlacement, addToast]
+    [gameState, isAiThinking, pendingPlacements, selectedTileIndex, placeTile, removePlacement, addToast]
   );
 
   // Handle tile selection in rack
   const handleTileClick = useCallback(
     (index: number) => {
-      if (!gameState || gameState.phase !== 'PLAYING' || isAiThinking || isPaused) return;
+      if (!gameState || gameState.phase !== 'PLAYING' || isAiThinking) return;
       const currentPlayer = gameState.players[gameState.currentPlayerIndex];
       if (currentPlayer.isAI) return;
       if (selectedTileIndex === index) { selectTile(null); } else { selectTile(index); }
     },
-    [gameState, isAiThinking, isPaused, selectedTileIndex, selectTile]
+    [gameState, isAiThinking, selectedTileIndex, selectTile]
   );
 
   const handleSubmit = useCallback(() => {
@@ -131,7 +127,6 @@ const Game: React.FC = () => {
   const handleRecall = useCallback(() => { recallLast(); }, [recallLast]);
   const handleSkip = useCallback(() => { skipTurn(); }, [skipTurn]);
   const handleHint = useCallback(() => { useHint(); }, [useHint]);
-  const handleTogglePause = useCallback(() => { togglePause(); }, [togglePause]);
   const handleCloseScorePanel = useCallback(() => { closeScorePanel(); }, [closeScorePanel]);
 
   // Word click — fetch dictionary and show detail modal
@@ -267,7 +262,7 @@ const Game: React.FC = () => {
   const isPlayerTurn = !currentPlayer.isAI && gameState.phase === 'PLAYING';
   const player = gameState.players[0];
   const aiPlayer = gameState.players[1];
-  const canSubmit = pendingPlacements.size > 0 && isPlayerTurn && !isPaused;
+  const canSubmit = pendingPlacements.size > 0 && isPlayerTurn;
   const hasPlacedTiles = pendingPlacements.size > 0;
 
   let resultWinner: 'player' | 'ai' | 'draw' = 'draw';
@@ -286,23 +281,8 @@ const Game: React.FC = () => {
         opponentInfo={{ name: aiPlayer.name }}
         playerScore={player.score}
         opponentScore={aiPlayer.score}
-        isPaused={isPaused}
         onQuit={handleQuit}
-        onTogglePause={handleTogglePause}
       />
-
-      {/* Pause overlay */}
-      {isPaused && (
-        <div className={styles.pauseOverlay}>
-          <div className={styles.pauseCard}>
-            <span className={styles.pauseIcon}>⏸</span>
-            <span className={styles.pauseText}>游戏已暂停</span>
-            <button className={styles.pauseResumeBtn} onClick={handleTogglePause}>
-              继续游戏
-            </button>
-          </div>
-        </div>
-      )}
 
       <div className={styles.gameArea}>
         {/* Board */}
@@ -313,7 +293,7 @@ const Game: React.FC = () => {
             placedTiles={pendingPlacements}
             onCellClick={handleCellClick}
             hasSelectedTile={selectedTileIndex !== null}
-            disabled={!isPlayerTurn || isAiThinking || isPaused}
+            disabled={!isPlayerTurn || isAiThinking}
           />
         </div>
 
@@ -333,7 +313,7 @@ const Game: React.FC = () => {
             tiles={currentPlayer.isAI ? [] : currentPlayer.rack}
             selectedIndex={selectedTileIndex}
             onTileClick={handleTileClick}
-            disabled={!isPlayerTurn || isAiThinking || isPaused}
+            disabled={!isPlayerTurn || isAiThinking}
           />
         </div>
 
@@ -345,7 +325,7 @@ const Game: React.FC = () => {
           onHint={handleHint}
           canSubmit={canSubmit}
           hasPlacedTiles={hasPlacedTiles}
-          isPlayerTurn={isPlayerTurn && !isPaused}
+          isPlayerTurn={isPlayerTurn}
           hintsRemaining={hintsRemaining}
           loading={isSubmitting}
         />

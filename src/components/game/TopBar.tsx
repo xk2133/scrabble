@@ -12,9 +12,7 @@ interface TopBarProps {
   opponentInfo: PlayerInfo;
   playerScore: number;
   opponentScore: number;
-  isPaused: boolean;
   onQuit?: () => void;
-  onTogglePause?: () => void;
   className?: string;
 }
 
@@ -43,9 +41,7 @@ const TopBar: React.FC<TopBarProps> = ({
   opponentInfo,
   playerScore,
   opponentScore,
-  isPaused,
   onQuit,
-  onTogglePause,
   className,
 }) => {
   return (
@@ -59,18 +55,8 @@ const TopBar: React.FC<TopBarProps> = ({
         </div>
       </div>
 
-      {/* Center: pause */}
-      <div className={styles.center}>
-        {onTogglePause && (
-          <button
-            className={styles.pauseBtn}
-            onClick={onTogglePause}
-            title={isPaused ? '继续' : '暂停'}
-          >
-            {isPaused ? '▶' : '⏸'}
-          </button>
-        )}
-      </div>
+      {/* Center spacer */}
+      <div className={styles.center} />
 
       {/* Right: self score + nickname + avatar + quit */}
       <div className={styles.right}>

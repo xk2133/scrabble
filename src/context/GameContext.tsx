@@ -53,7 +53,6 @@ interface GameContextType {
   showResult: boolean;
   errorMessage: string | null;
   hintsRemaining: number;
-  isPaused: boolean;
   initGame: (playerName: string, mode: GameMode, difficulty?: AIDifficulty, variant?: GameVariant) => void;
   selectTile: (index: number | null) => void;
   placeTile: (row: number, col: number) => void;
@@ -61,7 +60,6 @@ interface GameContextType {
   recallAll: () => void;
   recallLast: () => void;
   useHint: () => void;
-  togglePause: () => void;
   submitMove: () => void;
   skipTurn: () => void;
   closeScorePanel: () => void;
@@ -430,7 +428,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
     return saved?.hintsRemaining ?? 3;
   });
-  const [isPaused, setIsPaused] = useState(false);
 
   const tileBagRef = useRef<Tile[]>(getItem<SavedGame | null>(GAME_SAVE_KEY, null)?.tileBag ?? []);
   const placementSourceRef = useRef<Map<string, number>>(
@@ -529,7 +526,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setShowResult(false);
     setErrorMessage(null);
     setHintsRemaining(3);
-    setIsPaused(false);
     consecutiveSkipsRef.current = 0;
     pendingAITriggerRef.current = null;
     placementSourceRef.current = new Map();
@@ -600,11 +596,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const [rowStr, colStr] = lastKey.split(',');
     removePlacement(parseInt(rowStr, 10), parseInt(colStr, 10));
   }, [removePlacement]);
-
-  // ---- Pause ----
-  const togglePause = useCallback(() => {
-    setIsPaused(prev => !prev);
-  }, []);
 
   // ---- Hint System ----
   const useHint = useCallback(async () => {
@@ -941,7 +932,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setShowResult(false);
     setErrorMessage(null);
     setHintsRemaining(3);
-    setIsPaused(false);
     consecutiveSkipsRef.current = 0;
     pendingAITriggerRef.current = null;
     placementSourceRef.current = new Map();
@@ -956,9 +946,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     gameState, pendingPlacements, selectedTileIndex,
     isSubmitting, isAiThinking, showScorePanel,
     lastMoveResult, showResult, errorMessage,
-    hintsRemaining, isPaused,
+    hintsRemaining,
     initGame, selectTile, placeTile, removePlacement,
-    recallAll, recallLast, useHint, togglePause, submitMove, skipTurn,
+    recallAll, recallLast, useHint, submitMove, skipTurn,
     resetGame, closeScorePanel, closeResult, clearError,
   };
 
