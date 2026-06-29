@@ -17,7 +17,6 @@ import type { AIMove } from '../engine/aiTypes';
 import { selectMove as greedySelectMove } from '../engine/greedyAI';
 import { getItem, setItem, removeItem } from '../services/storageService';
 
-const TURN_SECONDS = 60;
 const GAME_SAVE_KEY = 'scrabble_game_save';
 
 // Lazy-load word list (same pattern as useTrie)
@@ -53,7 +52,6 @@ interface GameContextType {
   lastMoveResult: LastMoveResult | null;
   showResult: boolean;
   errorMessage: string | null;
-  turnSeconds: number;
   hintsRemaining: number;
   isPaused: boolean;
   initGame: (playerName: string, mode: GameMode, difficulty?: AIDifficulty, variant?: GameVariant) => void;
@@ -398,7 +396,6 @@ interface SavedGame {
   gameState: GameState;
   pendingPlacements: [string, PlacedTileInput][];
   selectedTileIndex: number | null;
-  turnSeconds: number;
   hintsRemaining: number;
   tileBag: Tile[];
   placementSource: [string, number][];
@@ -429,10 +426,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [lastMoveResult, setLastMoveResult] = useState<LastMoveResult | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [turnSeconds, setTurnSeconds] = useState(() => {
-    const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
-    return saved?.turnSeconds ?? TURN_SECONDS;
-  });
   const [hintsRemaining, setHintsRemaining] = useState(() => {
     const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
     return saved?.hintsRemaining ?? 3;
@@ -463,7 +456,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
         gameState,
         pendingPlacements: Array.from(pendingPlacements.entries()),
         selectedTileIndex,
-        turnSeconds,
         hintsRemaining,
         tileBag: tileBagRef.current,
         placementSource: Array.from(placementSourceRef.current.entries()),
@@ -474,65 +466,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     } else if (!gameState || gameState.phase === 'ENDED') {
       removeItem(GAME_SAVE_KEY);
     }
-  }, [gameState, pendingPlacements, selectedTileIndex, turnSeconds, hintsRemaining]);
+  }, [gameState, pendingPlacements, selectedTileIndex, hintsRemaining]);
 
-  // ---- Timer Countdown ----
-  const timerSkipRef = useRef<() => void>(() => {});
   const executeAIMoveRef = useRef<(state: GameState) => void>(() => {});
-  timerSkipRef.current = () => {
-    if (!gameState || gameState.phase !== 'PLAYING') return;
-    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    if (currentPlayer.isAI) return;
-    // Clear placements & skip to next player
-    setPendingPlacements(new Map());
-    placementSourceRef.current = new Map();
-    placementOrderRef.current = [];
-    setSelectedTileIndex(null);
-    const nextIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
-    const newState: GameState = {
-      ...gameState,
-      currentPlayerIndex: nextIndex,
-      turnNumber: gameState.turnNumber + 1,
-    };
-    setTurnSeconds(TURN_SECONDS);
-    setGameState(newState);
-    if (gameState.players[nextIndex]?.isAI) {
-      executeAIMoveRef.current(newState);
-    }
-  };
-
-  useEffect(() => {
-    if (!gameState || gameState.phase !== 'PLAYING') return;
-    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    if (currentPlayer.isAI || isAiThinking || isPaused) return;
-
-    let timedOut = false;
-    const interval = setInterval(() => {
-      setTurnSeconds(prev => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          if (!timedOut) {
-            timedOut = true;
-            setTimeout(() => timerSkipRef.current(), 0);
-          }
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => { clearInterval(interval); };
-  }, [gameState?.currentPlayerIndex, gameState?.phase, isAiThinking, isPaused]);
-
-  // Reset timer when turn changes
-  const prevTurnRef = useRef(gameState?.currentPlayerIndex);
-  useEffect(() => {
-    const idx = gameState?.currentPlayerIndex;
-    if (idx !== undefined && idx !== prevTurnRef.current) {
-      prevTurnRef.current = idx;
-      setTurnSeconds(TURN_SECONDS);
-    }
-  }, [gameState?.currentPlayerIndex]);
 
   // Ensure Trie is loaded
   const ensureTrie = useCallback(async (): Promise<Trie> => {
@@ -592,7 +528,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setLastMoveResult(null);
     setShowResult(false);
     setErrorMessage(null);
-    setTurnSeconds(TURN_SECONDS);
     setHintsRemaining(3);
     setIsPaused(false);
     consecutiveSkipsRef.current = 0;
@@ -1005,7 +940,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setLastMoveResult(null);
     setShowResult(false);
     setErrorMessage(null);
-    setTurnSeconds(TURN_SECONDS);
     setHintsRemaining(3);
     setIsPaused(false);
     consecutiveSkipsRef.current = 0;
@@ -1022,7 +956,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     gameState, pendingPlacements, selectedTileIndex,
     isSubmitting, isAiThinking, showScorePanel,
     lastMoveResult, showResult, errorMessage,
-    turnSeconds, hintsRemaining, isPaused,
+    hintsRemaining, isPaused,
     initGame, selectTile, placeTile, removePlacement,
     recallAll, recallLast, useHint, togglePause, submitMove, skipTurn,
     resetGame, closeScorePanel, closeResult, clearError,

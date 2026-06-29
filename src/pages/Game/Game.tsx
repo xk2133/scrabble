@@ -35,7 +35,6 @@ const Game: React.FC = () => {
     lastMoveResult,
     showResult,
     errorMessage,
-    turnSeconds,
     hintsRemaining,
     isPaused,
     initGame,
@@ -287,8 +286,6 @@ const Game: React.FC = () => {
         opponentInfo={{ name: aiPlayer.name }}
         playerScore={player.score}
         opponentScore={aiPlayer.score}
-        turnSeconds={turnSeconds}
-        isPlayerTurn={isPlayerTurn}
         isPaused={isPaused}
         onQuit={handleQuit}
         onTogglePause={handleTogglePause}

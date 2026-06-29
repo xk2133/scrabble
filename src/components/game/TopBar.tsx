@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Avatar from '../ui/Avatar';
-import Timer from './Timer';
 import styles from './TopBar.module.css';
 
 interface PlayerInfo {
@@ -13,8 +12,6 @@ interface TopBarProps {
   opponentInfo: PlayerInfo;
   playerScore: number;
   opponentScore: number;
-  turnSeconds: number;
-  isPlayerTurn: boolean;
   isPaused: boolean;
   onQuit?: () => void;
   onTogglePause?: () => void;
@@ -46,8 +43,6 @@ const TopBar: React.FC<TopBarProps> = ({
   opponentInfo,
   playerScore,
   opponentScore,
-  turnSeconds,
-  isPlayerTurn,
   isPaused,
   onQuit,
   onTogglePause,
@@ -64,13 +59,8 @@ const TopBar: React.FC<TopBarProps> = ({
         </div>
       </div>
 
-      {/* Center: timer + pause */}
+      {/* Center: pause */}
       <div className={styles.center}>
-        <Timer
-          seconds={turnSeconds}
-          isRunning={isPlayerTurn && !isPaused}
-          warning={turnSeconds <= 10}
-        />
         {onTogglePause && (
           <button
             className={styles.pauseBtn}
