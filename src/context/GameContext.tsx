@@ -15,8 +15,10 @@ import { Trie, createTrie } from '../engine/trie';
 import { computeAIMove } from '../engine/aiEngine';
 import type { AIMove } from '../engine/aiTypes';
 import { selectMove as greedySelectMove } from '../engine/greedyAI';
+import { getItem, setItem, removeItem } from '../services/storageService';
 
 const TURN_SECONDS = 60;
+const GAME_SAVE_KEY = 'scrabble_game_save';
 
 // Lazy-load word list (same pattern as useTrie)
 let cachedTrie: Trie | null = null;
@@ -390,29 +392,89 @@ function validatePlacement(
   return { score: totalScore, wordsFormed, valid: true };
 }
 
+// ---- Persistence ----
+
+interface SavedGame {
+  gameState: GameState;
+  pendingPlacements: [string, PlacedTileInput][];
+  selectedTileIndex: number | null;
+  turnSeconds: number;
+  hintsRemaining: number;
+  tileBag: Tile[];
+  placementSource: [string, number][];
+  placementOrder: string[];
+  consecutiveSkips: number;
+}
+
 // ---- Provider ----
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [gameState, setGameState] = useState<GameState | null>(null);
-  const [pendingPlacements, setPendingPlacements] = useState<Map<string, PlacedTileInput>>(new Map());
-  const [selectedTileIndex, setSelectedTileIndex] = useState<number | null>(null);
+  // Lazy initializers: restore saved game from localStorage
+  const [gameState, setGameState] = useState<GameState | null>(() => {
+    const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
+    return saved?.gameState ?? null;
+  });
+  const [pendingPlacements, setPendingPlacements] = useState<Map<string, PlacedTileInput>>(() => {
+    const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
+    if (saved?.pendingPlacements) return new Map(saved.pendingPlacements);
+    return new Map();
+  });
+  const [selectedTileIndex, setSelectedTileIndex] = useState<number | null>(() => {
+    const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
+    return saved?.selectedTileIndex ?? null;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [showScorePanel, setShowScorePanel] = useState(false);
   const [lastMoveResult, setLastMoveResult] = useState<LastMoveResult | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [turnSeconds, setTurnSeconds] = useState(TURN_SECONDS);
-  const [hintsRemaining, setHintsRemaining] = useState(3);
+  const [turnSeconds, setTurnSeconds] = useState(() => {
+    const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
+    return saved?.turnSeconds ?? TURN_SECONDS;
+  });
+  const [hintsRemaining, setHintsRemaining] = useState(() => {
+    const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
+    return saved?.hintsRemaining ?? 3;
+  });
   const [isPaused, setIsPaused] = useState(false);
 
-  const tileBagRef = useRef<Tile[]>([]);
-  const placementSourceRef = useRef<Map<string, number>>(new Map());
-  const placementOrderRef = useRef<string[]>([]);
+  const tileBagRef = useRef<Tile[]>(getItem<SavedGame | null>(GAME_SAVE_KEY, null)?.tileBag ?? []);
+  const placementSourceRef = useRef<Map<string, number>>(
+    (() => {
+      const saved = getItem<SavedGame | null>(GAME_SAVE_KEY, null);
+      return saved?.placementSource ? new Map(saved.placementSource) : new Map();
+    })()
+  );
+  const placementOrderRef = useRef<string[]>(
+    getItem<SavedGame | null>(GAME_SAVE_KEY, null)?.placementOrder ?? []
+  );
   const trieRef = useRef<Trie | null>(null);
   const trieReadyRef = useRef<boolean>(false);
-  const consecutiveSkipsRef = useRef(0);
+  const consecutiveSkipsRef = useRef(
+    getItem<SavedGame | null>(GAME_SAVE_KEY, null)?.consecutiveSkips ?? 0
+  );
   const pendingAITriggerRef = useRef<GameState | null>(null);
+
+  // Persist game state to localStorage whenever it changes
+  useEffect(() => {
+    if (gameState && gameState.phase === 'PLAYING') {
+      const data: SavedGame = {
+        gameState,
+        pendingPlacements: Array.from(pendingPlacements.entries()),
+        selectedTileIndex,
+        turnSeconds,
+        hintsRemaining,
+        tileBag: tileBagRef.current,
+        placementSource: Array.from(placementSourceRef.current.entries()),
+        placementOrder: placementOrderRef.current,
+        consecutiveSkips: consecutiveSkipsRef.current,
+      };
+      setItem(GAME_SAVE_KEY, data);
+    } else if (!gameState || gameState.phase === 'ENDED') {
+      removeItem(GAME_SAVE_KEY);
+    }
+  }, [gameState, pendingPlacements, selectedTileIndex, turnSeconds, hintsRemaining]);
 
   // ---- Timer Countdown ----
   const timerSkipRef = useRef<() => void>(() => {});
@@ -951,6 +1013,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     placementSourceRef.current = new Map();
     placementOrderRef.current = [];
     tileBagRef.current = [];
+    removeItem(GAME_SAVE_KEY);
   }, []);
   const closeResult = useCallback(() => setShowResult(false), []);
   const clearError = useCallback(() => setErrorMessage(null), []);
