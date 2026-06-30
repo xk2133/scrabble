@@ -11,7 +11,7 @@ function md5(str) {
   function q(n, c) { return n & c; }
   function p(n, c) { return n ^ c; }
   function s(n, c) { return ~n & c; }
-  function hex(x) { for (var i = 0; i < x.length; i++) x[i] = (x[i] >>> 0).toString(16).padStart(8, '0'); return x.join(''); }
+  function hex(x) { var h = ''; for (var i = 0; i < x.length; i++) { var w = x[i] >>> 0; for (var j = 0; j < 4; j++) h += ((w >>> (j * 8)) & 0xFF).toString(16).padStart(2, '0'); } return h; }
   function add(x, y) { return ((x >>> 0) + (y >>> 0)) & 0xFFFFFFFF; }
   var b = [];
   for (var i = 0; i < str.length; i++) b.push(str.charCodeAt(i));
