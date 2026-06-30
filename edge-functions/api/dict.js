@@ -33,7 +33,7 @@ function md5(str) {
       if (j < 16) { F = q(B, C) | s(B, D); g = j; }
       else if (j < 32) { F = q(D, B) | s(D, C); g = (5 * j + 1) % 16; }
       else if (j < 48) { F = p(p(B, C), D); g = (3 * j + 5) % 16; }
-      else { F = p(C, B | s(B, D)); g = (7 * j) % 16; }
+      else { F = p(C, B | ~D); g = (7 * j) % 16; }
       F = add(add(add(A, F), add(X[g], T[j])), 0);
       A = D; D = C; C = B; B = add(B, r(F, [7,12,17,22,5,9,14,20,4,11,16,23,6,10,15,21][j%4+Math.floor(j/16)*4]));
     }
@@ -55,7 +55,7 @@ export default function onRequest(context) {
   }
 
   const salt = String(Date.now()) + String(Math.random()).substring(2, 6);
-  const sign = md5(APP_KEY + word + salt + SECRET_KEY);
+  const sign = md5(APP_KEY + word + salt + SECRET_KEY).toUpperCase();
 
   const params = new URLSearchParams({
     q: word,
