@@ -69,9 +69,11 @@ export default function onRequest(context) {
   return fetch('https://openapi.youdao.com/api?' + params.toString())
     .then((resp) => {
       if (!resp.ok) {
-        return new Response(JSON.stringify({ errorCode: '1' }), {
-          status: 502,
-          headers: { 'Content-Type': 'application/json' },
+        return resp.text().then((body) => {
+          return new Response(JSON.stringify({ errorCode: '1', _debug: `Youdao HTTP ${resp.status}: ${body}` }), {
+            status: 502,
+            headers: { 'Content-Type': 'application/json' },
+          });
         });
       }
       return resp.text();
@@ -84,8 +86,8 @@ export default function onRequest(context) {
         },
       });
     })
-    .catch(() => {
-      return new Response(JSON.stringify({ errorCode: '1' }), {
+    .catch((err) => {
+      return new Response(JSON.stringify({ errorCode: '1', _debug: String(err) }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       });

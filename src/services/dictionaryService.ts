@@ -32,9 +32,15 @@ export async function lookupWord(word: string): Promise<WordDefinition | null> {
 
   try {
     const res = await fetch(`/api/dict?word=${encodeURIComponent(key)}`);
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`[dict] HTTP ${res.status} for "${key}"`);
+      return null;
+    }
     const data: YoudaoResponse = await res.json();
-    if (data.errorCode !== '0') return null;
+    if (data.errorCode !== '0') {
+      console.error(`[dict] API error for "${key}":`, (data as any)._debug || data.errorCode);
+      return null;
+    }
 
     const basic = data.basic;
     const phonetic = basic?.phonetic || basic?.['us-phonetic'] || basic?.['uk-phonetic'] || '';
