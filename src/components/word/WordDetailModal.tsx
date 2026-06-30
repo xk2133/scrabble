@@ -2,14 +2,8 @@ import React from 'react';
 import Modal from '../ui/Modal';
 import Skeleton from '../ui/Skeleton';
 import PronunciationButton from './PronunciationButton';
+import type { WordDefinition } from '../../services/dictionaryService';
 import styles from './WordDetailModal.module.css';
-
-interface WordDefinition {
-  word: string;
-  phonetic?: string;
-  phonetics: { text?: string; audio?: string }[];
-  meanings: { partOfSpeech: string; definitions: { definition: string; example?: string }[] }[];
-}
 
 interface WordDetailModalProps {
   word: string;
@@ -127,6 +121,21 @@ const WordDetailModal: React.FC<WordDetailModalProps> = ({
             </div>
           ))}
         </div>
+
+        {/* Examples */}
+        {definition.examples && definition.examples.length > 0 && (
+          <div className={styles.examples}>
+            <h4 className={styles.examplesTitle}>例句</h4>
+            <ul className={styles.examplesList}>
+              {definition.examples.map((ex, ei) => (
+                <li key={ei} className={styles.exampleItem}>
+                  <p className={styles.exampleEn}>{ex.english}</p>
+                  <p className={styles.exampleZh}>{ex.chinese}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     );
   };

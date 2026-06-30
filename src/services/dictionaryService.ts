@@ -47,24 +47,12 @@ export async function lookupWord(word: string): Promise<WordDefinition | null> {
     if (data.ukPhonetic && data.ukPhonetic !== data.usPhonetic) parts.push(`英 ${data.ukPhonetic}`);
     const phoneticText = parts.join('  ') || data.phonetic || '';
 
-    // 将例句分配到对应释义中（简单按语义匹配）
-    const rawMeanings = data.meanings || [];
-    const rawExamples = data.examples || [];
-
-    const meanings = rawMeanings.map((m) => ({
+    const meanings = (data.meanings || []).map((m) => ({
       partOfSpeech: m.partOfSpeech,
-      definitions: m.definitions.map((d) => {
-        // 尝试把例句匹配到释义（含词性关键词的例句优先）
-        const matched = rawExamples.find(
-          (ex) =>
-            ex.chinese.includes(m.partOfSpeech.replace('.', '')) ||
-            ex.chinese.includes(d.definition.substring(0, 3)),
-        );
-        return {
-          definition: d.definition,
-          example: matched ? `${matched.english} — ${matched.chinese}` : '',
-        };
-      }),
+      definitions: m.definitions.map((d) => ({
+        definition: d.definition,
+        example: '',
+      })),
     }));
 
     const result: WordDefinition = {
@@ -72,7 +60,7 @@ export async function lookupWord(word: string): Promise<WordDefinition | null> {
       phonetic: phoneticText,
       phonetics: phoneticText ? [{ text: phoneticText }] : [],
       meanings,
-      examples: rawExamples,
+      examples: data.examples || [],
       examTypes: data.examTypes,
     };
 
