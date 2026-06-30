@@ -7,15 +7,8 @@ import WordDetailModal from '../../components/word/WordDetailModal';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import TabBar from '../../components/layout/TabBar';
+import { lookupWord, type WordDefinition } from '../../services/dictionaryService';
 import styles from './WordBook.module.css';
-
-/** Word definition shape from dictionary API */
-interface WordDefinition {
-  word: string;
-  phonetic?: string;
-  phonetics: { text?: string; audio?: string }[];
-  meanings: { partOfSpeech: string; definitions: { definition: string; example?: string }[] }[];
-}
 
 const WordBook: React.FC = () => {
   const navigate = useNavigate();
@@ -59,14 +52,10 @@ const WordBook: React.FC = () => {
     setDetailError(null);
     setDetailLoading(true);
 
-    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`单词 "${word}" 未找到`);
-        return res.json();
-      })
-      .then((data: WordDefinition[]) => {
-        if (!data || data.length === 0) throw new Error(`单词 "${word}" 未找到`);
-        setWordDetail(data[0]);
+    lookupWord(word)
+      .then((result) => {
+        if (!result) throw new Error(`单词 "${word}" 未找到`);
+        setWordDetail(result);
         setDetailLoading(false);
       })
       .catch((err) => {

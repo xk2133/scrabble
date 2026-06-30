@@ -11,14 +11,8 @@ import ScorePanel from '../../components/game/ScorePanel';
 import ResultCard from '../../components/game/ResultCard';
 import WordDetailModal from '../../components/word/WordDetailModal';
 import { SkeletonText, SkeletonRect } from '../../components/ui/Skeleton';
+import { lookupWord, type WordDefinition } from '../../services/dictionaryService';
 import styles from './Game.module.css';
-
-interface WordDefinition {
-  word: string;
-  phonetic?: string;
-  phonetics: { text?: string; audio?: string }[];
-  meanings: { partOfSpeech: string; definitions: { definition: string; example?: string }[] }[];
-}
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -135,14 +129,10 @@ const Game: React.FC = () => {
     setWordDefinition(null);
     setDetailError(null);
     setDetailLoading(true);
-    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`单词 "${word}" 未找到`);
-        return res.json();
-      })
-      .then((data: WordDefinition[]) => {
-        if (!data || data.length === 0) throw new Error(`单词 "${word}" 未找到`);
-        setWordDefinition(data[0]);
+    lookupWord(word)
+      .then((result) => {
+        if (!result) throw new Error(`单词 "${word}" 未找到`);
+        setWordDefinition(result);
         setDetailLoading(false);
       })
       .catch((err) => {
@@ -365,13 +355,9 @@ const Game: React.FC = () => {
           opponentScore={aiPlayer.score}
           wordsPlayed={wordsPlayed}
           bingoCount={lastMoveResult?.isBingo ? 1 : 0}
-          wordBook={wordBook}
           onPlayAgain={handlePlayAgain}
           onShare={handleDownloadScreenshot}
           onHome={handleQuit}
-          onSaveWord={addWordToBook}
-          onRemoveWord={removeWordFromBook}
-          onPronounce={handlePronounce}
         />
       )}
     </div>

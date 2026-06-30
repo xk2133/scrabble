@@ -1,16 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import styles from './ResultCard.module.css';
-
-interface WordBookEntry {
-  word: string;
-  definition: string;
-}
-
-interface WordDefState {
-  loading: boolean;
-  definition: string;
-  error: boolean;
-}
 
 interface ResultCardProps {
   winner: 'player' | 'ai' | 'draw';
@@ -20,13 +9,9 @@ interface ResultCardProps {
   opponentScore: number;
   wordsPlayed: string[];
   bingoCount: number;
-  wordBook: WordBookEntry[];
   onPlayAgain: () => void;
   onShare: () => void;
   onHome?: () => void;
-  onSaveWord: (word: string, definition: string) => void;
-  onRemoveWord: (word: string) => void;
-  onPronounce: (word: string) => void;
   className?: string;
 }
 
@@ -53,69 +38,24 @@ const ResultCard: React.FC<ResultCardProps> = ({
   opponentScore,
   wordsPlayed,
   bingoCount,
-  wordBook,
   onPlayAgain,
   onShare,
   onHome,
-  onSaveWord,
-  onRemoveWord,
-  onPronounce,
   className,
 }) => {
   const config = RESULT_CONFIG[winner];
   const longestWord = getLongestWord(wordsPlayed);
-  const [showWordList, setShowWordList] = useState(false);
-  const [wordDefs, setWordDefs] = useState<Record<string, WordDefState>>({});
-
-  const isWordSaved = useCallback(
-    (word: string) => wordBook.some((e) => e.word === word),
-    [wordBook],
-  );
-
-  const handleToggleWordList = useCallback(() => {
-    if (showWordList) {
-      setShowWordList(false);
-      return;
-    }
-    setShowWordList(true);
-
-    // Fetch definitions for words that haven't been fetched yet
-    const toFetch = wordsPlayed.filter((w) => !wordDefs[w]);
-    if (toFetch.length === 0) return;
-
-    toFetch.forEach((word) => {
-      setWordDefs((prev) => ({ ...prev, [word]: { loading: true, definition: '', error: false } }));
-      fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`)
-        .then((res) => {
-          if (!res.ok) throw new Error('not found');
-          return res.json();
-        })
-        .then((data: any[]) => {
-          const def = data?.[0]?.meanings?.[0]?.definitions?.[0]?.definition ?? '';
-          setWordDefs((prev) => ({ ...prev, [word]: { loading: false, definition: def, error: false } }));
-        })
-        .catch(() => {
-          setWordDefs((prev) => ({ ...prev, [word]: { loading: false, definition: '', error: true } }));
-        });
-    });
-  }, [showWordList, wordsPlayed, wordDefs]);
-
-  const handleSaveToggle = useCallback(
-    (word: string) => {
-      if (isWordSaved(word)) {
-        onRemoveWord(word);
-      } else {
-        const def = wordDefs[word]?.definition || '';
-        onSaveWord(word, def);
-      }
-    },
-    [isWordSaved, wordDefs, onSaveWord, onRemoveWord],
-  );
 
   return (
     <div className={[styles.overlay, className].filter(Boolean).join(' ')}>
-      <div className={[styles.container, showWordList ? styles.hasWordList : ''].filter(Boolean).join(' ')}>
-        {/* Title */}
+      <div className={styles.card}>
+        {/* Owl image */}
+        <img
+          src={`${import.meta.env.BASE_URL}owl.svg`}
+          alt="猫头鹰"
+          className={styles.owlImg}
+        />
+
         <h2 className={`${styles.title} ${styles[`title${config.cls.charAt(0).toUpperCase() + config.cls.slice(1)}`] || ''}`}>
           {config.title}
         </h2>
@@ -148,67 +88,6 @@ const ResultCard: React.FC<ResultCardProps> = ({
             <span className={styles.statValue}>{bingoCount}</span>
           </div>
         </div>
-
-        {/* Word list toggle button */}
-        <button className={styles.wordListBtn} onClick={handleToggleWordList}>
-          {showWordList ? '收起单词表' : `查看本局单词 (${wordsPlayed.length})`}
-        </button>
-
-        {/* Word table */}
-        {showWordList && (
-          <div className={styles.wordTableWrap}>
-            <table className={styles.wordTable}>
-              <thead>
-                <tr>
-                  <th className={styles.colWord}>英文</th>
-                  <th className={styles.colDef}>释义</th>
-                  <th className={styles.colSave}>收藏</th>
-                </tr>
-              </thead>
-              <tbody>
-                {wordsPlayed.map((word) => {
-                  const def = wordDefs[word];
-                  const saved = isWordSaved(word);
-                  return (
-                    <tr key={word}>
-                      <td className={styles.colWord}>
-                        <button
-                          className={styles.wordBtn}
-                          onClick={() => onPronounce(word)}
-                          title="点击发音"
-                        >
-                          {word}
-                        </button>
-                      </td>
-                      <td className={styles.colDef}>
-                        {def ? (
-                          def.loading ? (
-                            <span className={styles.defLoading}>加载中...</span>
-                          ) : def.error ? (
-                            <span className={styles.defError}>—</span>
-                          ) : (
-                            <span className={styles.defText}>{def.definition}</span>
-                          )
-                        ) : (
-                          <span className={styles.defLoading}>加载中...</span>
-                        )}
-                      </td>
-                      <td className={styles.colSave}>
-                        <button
-                          className={`${styles.saveBtn} ${saved ? styles.saved : ''}`}
-                          onClick={() => handleSaveToggle(word)}
-                          title={saved ? '取消收藏' : '收藏单词'}
-                        >
-                          {saved ? '★' : '☆'}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
 
         {/* Actions */}
         <div className={styles.actions}>
