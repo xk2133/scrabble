@@ -359,13 +359,19 @@ const Game: React.FC = () => {
       {showResult && (
         <ResultCard
           winner={resultWinner}
+          playerName={player.name}
+          opponentName={aiPlayer.name}
           playerScore={player.score}
           opponentScore={aiPlayer.score}
           wordsPlayed={wordsPlayed}
           bingoCount={lastMoveResult?.isBingo ? 1 : 0}
+          wordBook={wordBook}
           onPlayAgain={handlePlayAgain}
           onShare={handleDownloadScreenshot}
           onHome={handleQuit}
+          onSaveWord={addWordToBook}
+          onRemoveWord={removeWordFromBook}
+          onPronounce={handlePronounce}
         />
       )}
     </div>
