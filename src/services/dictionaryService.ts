@@ -8,62 +8,48 @@ export interface WordDefinition {
   }[];
 }
 
-const CACHE = new Map<string, WordDefinition>();
-const TRANS_CACHE = new Map<string, string>();
+let dictPromise: Promise<Record<string, string>> | null = null;
 
-/** Translate English text to Chinese via MyMemory free API */
-async function translateToChinese(text: string): Promise<string> {
-  if (!text) return text;
-  const trimmed = text.trim();
-  if (TRANS_CACHE.has(trimmed)) return TRANS_CACHE.get(trimmed)!;
-  try {
-    const res = await fetch(
-      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(trimmed)}&langpair=en|zh`,
-    );
-    if (!res.ok) return text;
-    const data = await res.json();
-    const translated: string = data?.responseData?.translatedText || text;
-    TRANS_CACHE.set(trimmed, translated);
-    return translated;
-  } catch {
-    return text; // fallback to English
-  }
+/** 懒加载内置词典 JSON */
+function loadDict(): Promise<Record<string, string>> {
+  if (dictPromise) return dictPromise;
+  dictPromise = fetch(`${import.meta.env.BASE_URL}dict.json`)
+    .then((res) => {
+      if (!res.ok) throw new Error('词典加载失败');
+      return res.json();
+    })
+    .catch(() => {
+      dictPromise = null;
+      return {};
+    });
+  return dictPromise;
 }
 
 export async function lookupWord(word: string): Promise<WordDefinition | null> {
   const key = word.toLowerCase().trim();
-  if (CACHE.has(key)) return CACHE.get(key)!;
+  if (!key) return null;
 
-  try {
-    const res = await fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(key)}`,
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) return null;
-    const def = data[0] as WordDefinition;
+  const dict = await loadDict();
+  const translation = dict[key];
+  if (!translation) return null;
 
-    // Translate each definition to Chinese
-    for (const meaning of def.meanings) {
-      for (const d of meaning.definitions) {
-        d.definition = await translateToChinese(d.definition);
-        if (d.example) {
-          d.example = await translateToChinese(d.example);
-        }
-      }
-    }
-
-    CACHE.set(key, def);
-    return def;
-  } catch {
-    return null;
-  }
+  return {
+    word: key,
+    phonetic: '',
+    phonetics: [],
+    meanings: [
+      {
+        partOfSpeech: '',
+        definitions: [{ definition: translation, example: '' }],
+      },
+    ],
+  };
 }
 
 export function getCacheSize(): number {
-  return CACHE.size;
+  return dictPromise ? 1 : 0;
 }
+
 export function clearCache(): void {
-  CACHE.clear();
-  TRANS_CACHE.clear();
+  dictPromise = null;
 }
